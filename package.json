@@ -1,14 +1,12 @@
 {
-  "name": "whatsapp-web-bot",
+  "name": "tarzan-ngrok-bot",
   "version": "1.0.0",
-  "description": "WhatsApp Bot with QR linking via GitHub",
+  "description": "بوت طرزان يعمل على GitHub Actions مع ngrok",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.6.0",
-    "express": "^4.18.2",
-    "qrcode-terminal": "^0.12.0"
+    "express": "^4.18.2"
   }
 }
