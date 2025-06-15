@@ -1,23 +1,41 @@
-name: WhatsApp Bot Runner
+name: Node.js CI
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [20.x]
+
     steps:
-      - name: ⬇️ نسخ المشروع
-        uses: actions/checkout@v3
+    - name: 🧾 نسخ المشروع
+      uses: actions/checkout@v3
 
-      - name: 🔧 تثبيت Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
+    - name: 🔧 تثبيت Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
 
-      - name: 📦 تثبيت التبعيات
-        run: npm install
+    - name: ⬇️ تثبيت التبعيات
+      run: npm install
 
-      - name: 🚀 تشغيل البوت
-        run: node index.js
+    - name: 🚀 تشغيل السيرفر
+      run: |
+        nohup node index.js > output.log 2>&1 &
+
+    - name: 🌐 تثبيت ngrok وتشغيله
+      run: |
+        npm install -g ngrok
+        ngrok config add-authtoken ak_2yB4de6v1kNx7h9ruwBHYcW8aYe
+        nohup ngrok http 3000 > ngrok.log 2>&1 &
+        sleep 10
+        curl http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^"]*' > url.txt
+        echo "🔗 رابط ngrok:"
+        cat url.txt
