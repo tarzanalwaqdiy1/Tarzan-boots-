@@ -26,16 +26,23 @@ jobs:
     - name: ⬇️ تثبيت التبعيات
       run: npm install
 
-    - name: 🚀 تشغيل السيرفر
+    - name: 🚀 تشغيل السيرفر في الخلفية
       run: |
         nohup node index.js > output.log 2>&1 &
+        sleep 3
 
-    - name: 🌐 تثبيت ngrok وتشغيله
+    - name: 🌐 تثبيت ngrok + تشغيله
       run: |
         npm install -g ngrok
         ngrok config add-authtoken ak_2yB4de6v1kNx7h9ruwBHYcW8aYe
         nohup ngrok http 3000 > ngrok.log 2>&1 &
-        sleep 10
-        curl http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^"]*' > url.txt
+        echo "🕒 ننتظر ngrok يشتغل..."
+        for i in {1..10}; do
+          sleep 2
+          if curl -s http://127.0.0.1:4040/api/tunnels > /dev/null; then
+            break
+          fi
+        done
+        curl -s http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^"]*' > url.txt
         echo "🔗 رابط ngrok:"
         cat url.txt
